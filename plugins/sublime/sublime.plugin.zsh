@@ -1,42 +1,67 @@
 # Sublime Text 2 Aliases
 
-if [[ $('uname') == 'Linux' ]]; then
-    local _sublime_linux_paths > /dev/null 2>&1
-    _sublime_linux_paths=(
-        "$HOME/bin/sublime_text"
-        "/opt/sublime_text/sublime_text"
-        "/usr/local/bin/sublime_text"
-        "/usr/local/bin/sublime-text"
-        "/usr/bin/sublime_text"
-        "/usr/bin/sublime-text"
-    )
-	for _sublime_path in $_sublime_linux_paths; do
-		if [[ -a $_sublime_path ]]; then
-			st_run() { nohup $_sublime_path $@ > /dev/null 2>&1 &| }
-	        alias st=st_run
-			break
-		fi
-	done
+_sublime_find_path()
+{
+    local _OS="$1"
+    local sublime_linux_paths
+    local sublime_linux_names
+    local name
+    local dir
 
-elif  [[ $('uname') == 'Darwin' ]]; then
-    local _sublime_darwin_paths > /dev/null 2>&1
-    _sublime_darwin_paths=(
-        "/usr/local/bin/subl"
-        "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"
-        "/Applications/Sublime Text 3.app/Contents/SharedSupport/bin/subl"
-        "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl"
-        "$HOME/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"
-        "$HOME/Applications/Sublime Text 3.app/Contents/SharedSupport/bin/subl"
-        "$HOME/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl"
-    )
+    case "$OS" in
+        Darwin)
+            sublime_names=("subl")
+            sublime_dirs=(
+                "/usr/local/bin"
+                "/Applications/Sublime Text.app/Contents/SharedSupport/bin"
+                "/Applications/Sublime Text 3.app/Contents/SharedSupport/bin"
+                "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin"
+                "$HOME/Applications/Sublime Text.app/Contents/SharedSupport/bin"
+                "$HOME/Applications/Sublime Text 3.app/Contents/SharedSupport/bin"
+                "$HOME/Applications/Sublime Text 2.app/Contents/SharedSupport/bin"
+            )
+            ;;
+        *)
+            sublime_names=("subl" "sublime_text" "sublime-text")
+            sublime_dirs=(
+                "$HOME/bin"
+                "/opt/sublime_text"
+                "/usr/local/bin"
+                "/usr/bin"
+            )
+            ;;
+    esac
 
-    for _sublime_path in $_sublime_darwin_paths; do
-        if [[ -a $_sublime_path ]]; then
+    for name in $sublime_names ; do
+        for dir in $sublime_dirs ; do
+            if [[ -a "$dir/$name" ]]; then
+                echo "$dir/$name"
+                return 0
+                break
+            fi
+        done
+    done
+    return 1
+}
+
+
+local _OS >/dev/null 2>&1
+_OS=$('uname')
+
+_sublime_path=$(_sublime_find_path "$_OS")
+if [[ -n "$_sublime_path" ]] ; then
+
+    case "$_OS" ; in
+        Darwin)
             alias subl="'$_sublime_path'"
             alias st=subl
-            break
-        fi
-    done
+            ;;
+        *)
+            st_run() { $_sublime_path $@ > /dev/null 2>&1 &| }
+            alias st=st_run
+            ;;
+    esac
+    alias stt='st .'
+
 fi
 
-alias stt='st .'
