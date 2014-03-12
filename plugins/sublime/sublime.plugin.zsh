@@ -13,12 +13,12 @@ _sublime_find_path()
             sublime_names=("subl")
             sublime_dirs=(
                 "/usr/local/bin"
-                "/Applications/Sublime Text.app/Contents/SharedSupport/bin"
-                "/Applications/Sublime Text 3.app/Contents/SharedSupport/bin"
-                "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin"
                 "$HOME/Applications/Sublime Text.app/Contents/SharedSupport/bin"
                 "$HOME/Applications/Sublime Text 3.app/Contents/SharedSupport/bin"
                 "$HOME/Applications/Sublime Text 2.app/Contents/SharedSupport/bin"
+                "/Applications/Sublime Text.app/Contents/SharedSupport/bin"
+                "/Applications/Sublime Text 3.app/Contents/SharedSupport/bin"
+                "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin"
             )
             ;;
         *)
